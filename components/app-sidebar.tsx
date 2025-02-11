@@ -1,4 +1,7 @@
-import { User, Timer, Book, Moon } from "lucide-react";
+"use client";
+
+import { User, Timer, Book, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 import {
   Sidebar,
@@ -11,31 +14,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Menu items.
-const items = [
-  {
-    title: "Profil",
-    url: "#",
-    icon: User,
-  },
-  {
-    title: "Absences / Retards",
-    url: "#",
-    icon: Timer,
-  },
-  {
-    title: "Réservations",
-    url: "#",
-    icon: Book,
-  },
-  {
-    title: "Mode sombre",
-    url: "#",
-    icon: Moon,
-  },
-];
-
 export function AppSidebar() {
+  const { theme, toggleTheme } = useTheme();
+
+  const items = [
+    { title: "Profil", url: "#", icon: User },
+    { title: "Absences / Retards", url: "#", icon: Timer },
+    { title: "Réservations", url: "#", icon: Book },
+  ];
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -53,6 +40,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild onClick={toggleTheme}>
+                  <button>
+                    {theme === "dark" ? <Sun /> : <Moon />}
+                    <span>
+                      {theme === "dark" ? "Mode clair" : "Mode sombre"}
+                    </span>
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
