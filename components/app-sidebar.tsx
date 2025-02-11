@@ -26,9 +26,10 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
+    <Sidebar className="h-screen flex flex-col">
+      <SidebarContent className="flex flex-col h-full">
+        <SidebarGroup className="flex flex-col h-full justify-between">
+          {/* Avatar Centré */}
           <SidebarGroupLabel className="flex items-center justify-center my-4">
             <Avatar>
               <AvatarImage
@@ -50,6 +51,10 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+          <SidebarGroupContent className="mt-auto p-4">
+            <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={toggleTheme}>
                   <Button aria-label="Bouton pour changer le thème de la page">
