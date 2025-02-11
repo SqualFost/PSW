@@ -13,6 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Button } from "./ui/button";
 
 export function AppSidebar() {
   const { theme, toggleTheme } = useTheme();
@@ -42,12 +43,12 @@ export function AppSidebar() {
               ))}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={toggleTheme}>
-                  <button>
+                  <Button aria-label="Bouton pour changer le thème de la page">
                     {theme === "dark" ? <Sun /> : <Moon />}
                     <span>
                       {theme === "dark" ? "Mode clair" : "Mode sombre"}
                     </span>
-                  </button>
+                  </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

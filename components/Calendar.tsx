@@ -51,13 +51,23 @@ const Calendar = () => {
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
       <div className="flex justify-between items-center mb-4">
-        <Button onClick={prevMonth} variant="outline" size="icon">
+        <Button
+          aria-label="Bouton pour reculer d'un mois"
+          onClick={prevMonth}
+          variant="outline"
+          size="icon"
+        >
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <h2 className="text-2xl font-bold">
           {format(currentDate, "MMMM yyyy", { locale: fr })}
         </h2>
-        <Button onClick={nextMonth} variant="outline" size="icon">
+        <Button
+          aria-label="Bouton pour avancer d'un mois"
+          onClick={nextMonth}
+          variant="outline"
+          size="icon"
+        >
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
@@ -71,6 +81,7 @@ const Calendar = () => {
           <Drawer key={day.toString()}>
             <DrawerTrigger asChild>
               <Button
+                aria-label="Bouton de date"
                 variant="outline"
                 className={`h-16 ${
                   !isSameMonth(day, currentDate) ? "text-gray-300" : ""
@@ -127,7 +138,9 @@ const Calendar = () => {
               </div>
               <DrawerFooter>
                 <DrawerClose asChild>
-                  <Button variant="outline">Fermer</Button>
+                  <Button aria-label="Ferme le drawer" variant="outline">
+                    Fermer
+                  </Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>
