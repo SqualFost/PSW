@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 import {
   format,
   addMonths,
@@ -38,6 +39,7 @@ import {
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { theme, toggleTheme } = useTheme();
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -72,7 +74,13 @@ const Calendar = () => {
                 variant="outline"
                 className={`h-16 ${
                   !isSameMonth(day, currentDate) ? "text-gray-300" : ""
-                } ${isSameDay(day, selectedDate as Date) ? "bg-blue-200" : ""}`}
+                } ${
+                  isSameDay(day, selectedDate as Date)
+                    ? theme === "dark"
+                      ? "bg-blue-700"
+                      : "bg-blue-300"
+                    : ""
+                }`}
                 onClick={() => setSelectedDate(day)}
               >
                 {format(day, "d")}
@@ -96,7 +104,7 @@ const Calendar = () => {
                   className="w-[80%] mx-auto"
                 >
                   <CarouselContent>
-                    {Array.from({ length: 30 }).map((_, index) => (
+                    {Array.from({ length: 100 }).map((_, index) => (
                       <CarouselItem
                         key={index}
                         className="md:basis-1/4 lg:basis-1/6"
