@@ -31,7 +31,10 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center justify-center my-4">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage
+                alt="avatar de l'utilisateur"
+                src="https://github.com/shadcn.png"
+              />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </SidebarGroupLabel>
