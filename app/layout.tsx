@@ -18,8 +18,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
-        <ThemeProvider>
+      <ThemeProvider>
+        <body className={inter.className}>
           <div className="flex">
             <SidebarProvider>
               <AppSidebar />
@@ -29,8 +29,8 @@ export default function RootLayout({
               </main>
             </SidebarProvider>
           </div>
-        </ThemeProvider>
-      </body>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

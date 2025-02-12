@@ -21,7 +21,7 @@ export function AppSidebar() {
 
   const items = [
     { title: "Profil", url: "/profil", icon: User },
-    { title: "Absences / Retards", url: "#", icon: Timer },
+    { title: "Absences / Retards", url: "/abscences", icon: Timer },
     { title: "Réservations", url: "/", icon: Book },
   ];
 
@@ -29,14 +29,13 @@ export function AppSidebar() {
     <Sidebar className="h-screen flex flex-col">
       <SidebarContent className="flex flex-col h-full">
         <SidebarGroup className="flex flex-col h-full justify-between">
-          {/* Avatar Centré */}
           <SidebarGroupLabel className="flex items-center justify-center my-4">
             <Avatar>
               <AvatarImage
                 alt="avatar de l'utilisateur"
                 src="https://github.com/shadcn.png"
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>TG</AvatarFallback>
             </Avatar>
           </SidebarGroupLabel>
           <SidebarGroupContent>
