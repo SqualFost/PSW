@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import {
@@ -45,8 +45,31 @@ const Calendar = () => {
   const monthEnd = endOfMonth(currentDate);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
+  const [slidesToScroll, setSlidesToScroll] = useState(6);
+
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
+
+  useEffect(() => {
+    const updateSlidesToScroll = () => {
+      if (window.innerWidth >= 1024) {
+        setSlidesToScroll(6);
+      } else if (window.innerWidth >= 768) {
+        setSlidesToScroll(5);
+      } else if (window.innerWidth >= 640) {
+        setSlidesToScroll(4);
+      } else {
+        setSlidesToScroll(3);
+      }
+    };
+
+    updateSlidesToScroll();
+    window.addEventListener("resize", updateSlidesToScroll);
+
+    return () => {
+      window.removeEventListener("resize", updateSlidesToScroll);
+    };
+  }, []);
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
@@ -110,7 +133,7 @@ const Calendar = () => {
                 <Carousel
                   opts={{
                     align: "start",
-                    slidesToScroll: 6,
+                    slidesToScroll,
                   }}
                   className="w-[80%] mx-auto"
                 >
@@ -118,7 +141,7 @@ const Calendar = () => {
                     {Array.from({ length: 100 }).map((_, index) => (
                       <CarouselItem
                         key={index}
-                        className="md:basis-1/4 lg:basis-1/6"
+                        className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6"
                       >
                         <div className="p-1">
                           <Card>
