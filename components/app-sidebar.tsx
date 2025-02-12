@@ -20,9 +20,9 @@ export function AppSidebar() {
   const { theme, toggleTheme } = useTheme();
 
   const items = [
-    { title: "Profil", url: "#", icon: User },
+    { title: "Profil", url: "/profil", icon: User },
     { title: "Absences / Retards", url: "#", icon: Timer },
-    { title: "Réservations", url: "#", icon: Book },
+    { title: "Réservations", url: "/", icon: Book },
   ];
 
   return (
