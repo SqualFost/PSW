@@ -17,7 +17,7 @@ const studentData = {
   promotion: "2024-2025",
   specialization: "Informatique et réseaux",
   birthDate: "14/10/2005",
-  address: "Anger",
+  address: "Angers",
   emergencyContact: "Madame Gasche (Mère) - 06 66 66 66 66",
   currentSemester: "Semestre 4",
   overallGrade: "14.5/20",
