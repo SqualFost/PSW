@@ -19,10 +19,10 @@ export const api = {
 
     getSalles : () => fetchAPI("/salle/"),
 
-    addSalle : (numero: string, digicode: string) =>
+    addSalle : (numero: string, digicode: string, statut: boolean) =>
         fetchAPI("/salle/", {
             method: "POST",
-            body: JSON.stringify({numero, digicode}),
+            body: JSON.stringify({numero, digicode, statut}),
         }),
 
     getUtilisateurs : () => fetchAPI("/utilisateurs/"),
