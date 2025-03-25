@@ -1,66 +1,12 @@
-<<<<<<< HEAD
-=======
 "use client";
 
->>>>>>> e8e927d (api absence / retards)
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-<<<<<<< HEAD
-
-// Exemple de données (à remplacer par les vraies données)
-const attendanceData = {
-  absences: [
-    { date: "2024-02-01", duration: "4h", reason: "Maladie", justified: true },
-    {
-      date: "2024-01-15",
-      duration: "2h",
-      reason: "Non justifiée",
-      justified: false,
-    },
-    {
-      date: "2023-12-05",
-      duration: "8h",
-      reason: "Rendez-vous médical",
-      justified: true,
-    },
-  ],
-  delays: [
-    { date: "2024-02-10", duration: "15min", reason: "Retard transport" },
-    { date: "2024-01-20", duration: "10min", reason: "Non justifié" },
-    { date: "2023-12-12", duration: "5min", reason: "Problème de réveil" },
-  ],
-};
-
-export default function AbsencesRetardsPage() {
-=======
 import { api } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 
-// Exemple de données (à remplacer par les vraies données)
-// const attendanceData = {
-//   absences: [
-//     { date: "2024-02-01", duration: "4h", reason: "Maladie", justified: true },
-//     {
-//       date: "2024-01-15",
-//       duration: "2h",
-//       reason: "Non justifiée",
-//       justified: false,
-//     },
-//     {
-//       date: "2023-12-05",
-//       duration: "8h",
-//       reason: "Rendez-vous médical",
-//       justified: true,
-//     },
-//   ],
-//   delays: [
-//     { date: "2024-02-10", duration: "15min", reason: "Retard transport" },
-//     { date: "2024-01-20", duration: "10min", reason: "Non justifié" },
-//     { date: "2023-12-12", duration: "5min", reason: "Problème de réveil" },
-//   ],
-// };
 
 interface Absence {
   id: number;
@@ -102,7 +48,6 @@ export default function AbsencesRetardsPage() {
 
     fetchData();
   }, []);
->>>>>>> e8e927d (api absence / retards)
   return (
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Absences et Retards</h1>
@@ -121,35 +66,6 @@ export default function AbsencesRetardsPage() {
               </div>
             </CardHeader>
             <CardContent>
-<<<<<<< HEAD
-              <div className="space-y-4">
-                {attendanceData.absences.map((absence, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                  >
-                    <div className="space-y-1">
-                      <p className="font-medium">
-                        {new Date(absence.date).toLocaleDateString("fr-FR")}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {absence.reason}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant={absence.justified ? "default" : "destructive"}
-                      >
-                        {absence.justified ? "Justifiée" : "Non justifiée"}
-                      </Badge>
-                      <span className="text-sm font-medium">
-                        {absence.duration}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-=======
               {loading ? (
                 <p>Chargement des données...</p>
               ) : absences.length === 0 ? (
@@ -173,7 +89,6 @@ export default function AbsencesRetardsPage() {
                   ))}
                 </div>
               )}
->>>>>>> e8e927d (api absence / retards)
             </CardContent>
           </Card>
         </TabsContent>
@@ -186,28 +101,6 @@ export default function AbsencesRetardsPage() {
               </div>
             </CardHeader>
             <CardContent>
-<<<<<<< HEAD
-              <div className="space-y-4">
-                {attendanceData.delays.map((delay, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                  >
-                    <div className="space-y-1">
-                      <p className="font-medium">
-                        {new Date(delay.date).toLocaleDateString("fr-FR")}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {delay.reason}
-                      </p>
-                    </div>
-                    <span className="text-sm font-medium">
-                      {delay.duration}
-                    </span>
-                  </div>
-                ))}
-              </div>
-=======
               {loading ? (
                 <p>Chargement des données...</p>
               ) : absences.length === 0 ? (
@@ -231,7 +124,6 @@ export default function AbsencesRetardsPage() {
                   ))}
                 </div>
               )}
->>>>>>> e8e927d (api absence / retards)
             </CardContent>
           </Card>
         </TabsContent>
