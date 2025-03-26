@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Timer, Book, Moon, Sun } from "lucide-react";
+import { User, Timer, Book, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 
@@ -21,9 +22,24 @@ export function AppSidebar() {
 
   const items = [
     { title: "Profil", url: "/profil", icon: User },
-    { title: "Absences / Retards", url: "/abscences", icon: Timer },
-    { title: "Réservations", url: "/", icon: Book },
+    { title: "Absences / Retards", url: "/absences", icon: Timer },
+    { title: "Réservations", url: "/home", icon: Book },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+
+      if (res.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        console.error("Erreur lors de la déconnexion");
+      }
+    } catch (error) {
+      console.error("Erreur réseau :", error);
+    }
+  };
 
   return (
     <Sidebar className="h-screen flex flex-col">
@@ -56,11 +72,27 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={toggleTheme}>
-                  <Button aria-label="Bouton pour changer le thème de la page">
+                  <Button
+                    variant="ghost"
+                    aria-label="Bouton pour changer le thème de la page"
+                  >
                     {theme === "dark" ? <Sun /> : <Moon />}
                     <span>
                       {theme === "dark" ? "Mode clair" : "Mode sombre"}
                     </span>
+                  </Button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarSeparator className="my-2" />
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild onClick={handleLogout}>
+                  <Button
+                    variant="ghost"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    aria-label="Bouton pour se déconnecter"
+                  >
+                    <LogOut />
+                    <span>Se déconnecter</span>
                   </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>

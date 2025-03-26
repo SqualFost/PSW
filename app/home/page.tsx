@@ -1,4 +1,4 @@
-import Calendar from "@/components/Calendar"
+import Calendar from "@/components/Calendar";
 
 export default function Home() {
   return (
@@ -6,6 +6,5 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-8">Planning des salles</h1>
       <Calendar />
     </div>
-  )
+  );
 }
-

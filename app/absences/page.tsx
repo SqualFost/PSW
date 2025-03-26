@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-import { api } from "@/lib/apiClient";
+import { absence } from "@/app/api/user/absence";
+import { retard } from "@/app/api/user/retard";
 import { useEffect, useState } from "react";
-
 
 interface Absence {
   id: number;
@@ -34,8 +34,8 @@ export default function AbsencesRetardsPage() {
     async function fetchData() {
       try {
         const [absData, retData] = await Promise.all([
-          api.getAbsences(),
-          api.getRetards(),
+          absence.getAbsences(),
+          retard.getRetards(),
         ]);
         setAbsences(absData);
         setRetards(retData);

@@ -1,14 +1,14 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/context/AuthContext";
+import LayoutClient from "@/components/layout-client";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "ENT",
-  description: "Ent test de badges",
+  title: "PSW",
+  description: "PSW BTS Ciel",
 };
 
 export default function RootLayout({
@@ -18,19 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <ThemeProvider>
-        <body className={inter.className}>
-          <div className="flex">
-            <SidebarProvider>
-              <AppSidebar />
-              <main className="flex-1">
-                <SidebarTrigger />
-                {children}
-              </main>
-            </SidebarProvider>
-          </div>
-        </body>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <body className={inter.className}>
+            <LayoutClient>{children}</LayoutClient>
+          </body>
+        </ThemeProvider>
+      </AuthProvider>
     </html>
   );
 }
