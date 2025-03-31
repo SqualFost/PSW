@@ -28,7 +28,7 @@ export default function LoginPage() {
     try {
       const success = await login(username, password);
       if (success) {
-        router.push("/home");
+        router.push("/");
       } else {
         setError("Identifiant ou mot de passe incorrect");
       }

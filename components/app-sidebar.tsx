@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Timer, Book, Moon, Sun, LogOut } from "lucide-react";
+import { Timer, Book, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -15,15 +15,14 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const { theme, toggleTheme } = useTheme();
 
   const items = [
-    { title: "Profil", url: "/profil", icon: User },
     { title: "Absences / Retards", url: "/absences", icon: Timer },
-    { title: "Réservations", url: "/home", icon: Book },
+    { title: "Réservations", url: "/", icon: Book },
   ];
 
   const handleLogout = async () => {

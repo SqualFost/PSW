@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
 import {
   format,
   addMonths,
@@ -36,7 +35,6 @@ import {
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const { theme } = useTheme();
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -102,9 +100,7 @@ const Calendar = () => {
               !isSameMonth(day, currentDate) ? "text-gray-300" : ""
             } ${
               isSameDay(day, selectedDate as Date)
-                ? theme === "dark"
-                  ? "bg-blue-700"
-                  : "bg-blue-300"
+                ? "bg-primary text-primary-foreground"
                 : ""
             }`}
             onClick={() => setSelectedDate(day)}

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 export const dynamic = "force-dynamic";
 
+
 const SECRET_KEY = process.env.JWT_SECRET || "supersecret";
 
 export async function GET() {

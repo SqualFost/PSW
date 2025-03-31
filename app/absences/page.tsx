@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-import { absence } from "@/app/api/user/absence";
-import { retard } from "@/app/api/user/retard";
+import { absence } from "@/app/api/user/absence/route";
+import { retard } from "@/app/api/user/retard/route";
 import { useEffect, useState } from "react";
 
 interface Absence {
@@ -71,11 +71,11 @@ export default function AbsencesRetardsPage() {
               ) : absences.length === 0 ? (
                 <p>Aucune absence.</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 divide-y divide-border">
                   {absences.map((absence) => (
                     <div
                       key={absence.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                      className="flex items-center justify-between p-3"
                     >
                       <div className="space-y-1">
                         <p className="font-medium">{absence.motif}</p>
