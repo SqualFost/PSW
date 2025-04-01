@@ -50,7 +50,7 @@ export default function LoginPage() {
             Connectez-vous !
           </CardTitle>
           <CardDescription className="text-center">
-            <p>Accédez au l&apos;ENT du BTS CIEL</p>
+            <p>Accédez au PSW</p>
           </CardDescription>
         </CardHeader>
         <CardContent>

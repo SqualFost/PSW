@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 interface Absence {
   id: number;
+  duree: number;
   motif: string;
   justifiee: boolean;
   id_utilisateur: number;
@@ -78,13 +79,19 @@ export default function AbsencesRetardsPage() {
                       className="flex items-center justify-between p-3"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{absence.motif}</p>
+                        <p className="font-medium">{absence.duree}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {absence.motif}
+                        </p>
                       </div>
                       <Badge
                         variant={absence.justifiee ? "default" : "destructive"}
                       >
                         {absence.justifiee ? "Justifiée" : "Non-justifiée"}
                       </Badge>
+                      <span className="text-sm font-medium">
+                        {absence.duree}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -103,7 +110,7 @@ export default function AbsencesRetardsPage() {
             <CardContent>
               {loading ? (
                 <p>Chargement des données...</p>
-              ) : absences.length === 0 ? (
+              ) : retards.length === 0 ? (
                 <p>Aucun retard.</p>
               ) : (
                 <div className="space-y-4">
@@ -113,7 +120,10 @@ export default function AbsencesRetardsPage() {
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{retard.motif}</p>
+                        <p className="font-medium">{retard.duree}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {retard.motif}
+                        </p>
                       </div>
                       <Badge
                         variant={retard.justifiee ? "default" : "destructive"}

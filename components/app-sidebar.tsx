@@ -3,7 +3,6 @@
 import { Timer, Book, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +27,6 @@ export function AppSidebar() {
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
-
       if (res.ok) {
         localStorage.removeItem("token");
         window.location.href = "/login";
@@ -43,13 +41,14 @@ export function AppSidebar() {
   return (
     <Sidebar className="h-screen flex flex-col">
       <SidebarContent className="flex flex-col h-full">
+        <div className="sr-only">
+          <h2>Menu de navigation</h2>
+          <p>Accédez aux différentes sections du site</p>
+        </div>
         <SidebarGroup className="flex flex-col h-full justify-between">
           <SidebarGroupLabel className="flex items-center justify-center my-4">
             <Avatar>
-              <AvatarImage
-                alt="avatar de l'utilisateur"
-                src="https://github.com/shadcn.png"
-              />
+              <AvatarImage alt="avatar de l'utilisateur" src="/globe.svg" />
               <AvatarFallback>TG</AvatarFallback>
             </Avatar>
           </SidebarGroupLabel>
@@ -71,10 +70,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={toggleTheme}>
-                  <Button
-                    variant="ghost"
-                    aria-label="Bouton pour changer le thème de la page"
-                  >
+                  <Button variant="ghost" aria-label="Changer le thème">
                     {theme === "dark" ? <Sun /> : <Moon />}
                     <span>
                       {theme === "dark" ? "Mode clair" : "Mode sombre"}
@@ -88,7 +84,7 @@ export function AppSidebar() {
                   <Button
                     variant="ghost"
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    aria-label="Bouton pour se déconnecter"
+                    aria-label="Se déconnecter"
                   >
                     <LogOut />
                     <span>Se déconnecter</span>
