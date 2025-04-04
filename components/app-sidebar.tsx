@@ -14,22 +14,26 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
+  const router = useRouter();
+  // Utilisation useTheme (hook) pour gérer le thème
   const { theme, toggleTheme } = useTheme();
 
+  // Quels éléments iront dans le menu de la sidebar
   const items = [
     { title: "Absences / Retards", url: "/absences", icon: Timer },
     { title: "Réservations", url: "/", icon: Book },
   ];
 
+  // Fonction de gestion de la déconnexion
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+        router.push("/login"); // Redirection vers la page de login
       } else {
         console.error("Erreur lors de la déconnexion");
       }

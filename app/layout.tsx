@@ -6,11 +6,13 @@ import LayoutClient from "@/components/layout-client";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// Définition des métadonnées du site (titre et description)
 export const metadata = {
   title: "PSW",
   description: "PSW BTS Ciel",
 };
 
+// Fonction principale qui gère la structure de la page (le layout)
 export default function RootLayout({
   children,
 }: {

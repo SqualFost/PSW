@@ -16,6 +16,7 @@ import {
 import { BookOpen } from "lucide-react";
 
 export default function LoginPage() {
+  // États (set + setter) pour stocker les informations du formulaire
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,8 +24,9 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
+  // Fonction appelée lors de l'envoi du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Empêche le rechargement de la page
     try {
       const success = await login(username, password);
       if (success) {
@@ -40,6 +42,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-md shadow-lg">
+        {/* En-tête du formulaire */}
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-2">
             <div className="bg-primary p-2 rounded-full">
@@ -53,6 +56,8 @@ export default function LoginPage() {
             <p>Accédez au PSW</p>
           </CardDescription>
         </CardHeader>
+
+        {/* Contenu du formulaire */}
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">

@@ -33,17 +33,22 @@ import {
 } from "@/components/ui/carousel";
 
 const Calendar = () => {
+  // Déclaration des états (set + setter)
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // Calcul de la période du mois
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const [slidesToScroll, setSlidesToScroll] = useState(6);
+  const [slidesToScroll, setSlidesToScroll] = useState(6); // Nombre de slides à faire défiler (initialement 6)
 
+  // Fonctions pour naviguer dans les mois
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
 
+  // mets à jour le nombre de slides en fonction de la largeur de la fenêtre
   useEffect(() => {
     const updateSlidesToScroll = () => {
       if (window.innerWidth >= 1024) {
@@ -85,10 +90,12 @@ const Calendar = () => {
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
+
+      {/* Affichage des jours de la semaine et des dates */}
       <div className="grid grid-cols-7 gap-2">
         {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
           <div key={day} className="text-center font-bold">
-            {day}
+            {day} {/* Affichage des jours de la semaine */}
           </div>
         ))}
         {monthDays.map((day) => (
@@ -105,15 +112,15 @@ const Calendar = () => {
             }`}
             onClick={() => setSelectedDate(day)}
           >
-            {format(day, "d")}
+            {format(day, "d")} {/* Affichage du jour du mois */}
           </Button>
         ))}
       </div>
       {selectedDate && (
         <Drawer
-          open={true}
+          open={true} // Le drawer est ouvert dès qu'une date est cliquée
           onOpenChange={(open) => {
-            if (!open) setSelectedDate(null);
+            if (!open) setSelectedDate(null); // Si tirroir fermé, reset la date sélectionnée.
           }}
         >
           <DrawerContent>
@@ -125,6 +132,8 @@ const Calendar = () => {
                 Détails des salles disponibles pour cette date
               </DrawerDescription>
             </DrawerHeader>
+
+            {/* Carousel pour afficher les salles disponibles */}
             <div className="p-4 w-full flex justify-around">
               <Carousel
                 opts={{
@@ -151,10 +160,11 @@ const Calendar = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
+                <CarouselPrevious /> {/* Navigation arrière */}
+                <CarouselNext /> {/* Navigation avant */}
               </Carousel>
             </div>
+
             <DrawerFooter>
               <DrawerClose asChild>
                 <Button

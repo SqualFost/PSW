@@ -1,29 +1,23 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000"; // URL de base de l'API
 
-export async function fetchAPI(endpoint:string, options: RequestInit = {}) {
-    const res = await fetch(`${API_URL}${endpoint}`, {
-        headers: {
-            "Content-Type": "application/json",
-            ...(options.headers || {}),  
-        }
-    })
+export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
+  // Effectue une requête à l'API avec l'URL complète
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+  });
 
-    if(!res.ok){
-        throw new Error(`Erreur de l'api.. ${res.statusText}̀`);
-    }
+  // Vérifie si la requête a réussi
+  if (!res.ok) {
+    throw new Error(`Erreur de l'API : ${res.statusText}`);
+  }
 
-    return res.json();
-};
+  return res.json(); // Renvoie la réponse en JSON
+}
 
+// Objet pour récupérer les absences
 export const absence = {
-
-    getAbsences : () => fetchAPI("/absence/"),
-    
-    // addAbsence : (motif: string, justifiee: boolean, id_utilisateur: number, id_edtutilisateur: number) =>
-    //     fetchAPI("/absence/", {
-    //         method: "POST",
-    //         body: JSON.stringify({motif, justifiee, id_utilisateur, id_edtutilisateur}),
-    //     }),
-
-
+  getAbsences: () => fetchAPI("/psw/absence/1"), // Appelle l'API pour récupérer les absences
 };
