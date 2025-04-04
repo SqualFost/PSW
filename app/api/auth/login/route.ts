@@ -51,7 +51,6 @@ export async function POST(req: Request) {
     // Création cookie pour stocker informations utilisateur
     (await cookies()).set("user", JSON.stringify(user), {
       httpOnly: true, // Empêche l'accès au cookie via JS côté client
-      secure: process.env.NODE_ENV === "production", // Sécurise le cookie en production
       sameSite: "strict", // Empêche l'envoi du cookie avec des requêtes tierces
       maxAge: 3600, // Durée de validité du cookie (1 heure)
     });
