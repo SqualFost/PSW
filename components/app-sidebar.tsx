@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { Timer, Book, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,15 +25,22 @@ export function AppSidebar() {
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
 
-  const absencesUrl =
-    user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
+  // Mémorise liens en fonct° du role
+  const absencesUrl = useMemo(
+    () =>
+      user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire",
+    [user]
+  );
 
-  const items = [
-    { title: "Absences / Retards", url: absencesUrl, icon: Timer },
-    { title: "Réservations", url: "/", icon: Book },
-  ];
+  const items = useMemo(
+    () => [
+      { title: "Absences / Retards", url: absencesUrl, icon: Timer },
+      { title: "Réservations", url: "/", icon: Book },
+    ],
+    [absencesUrl]
+  );
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
@@ -43,7 +51,7 @@ export function AppSidebar() {
     } catch (error) {
       console.error("Erreur réseau lors de la déconnexion :", error);
     }
-  };
+  }, [router]);
 
   return (
     <Sidebar className="h-screen flex flex-col">
@@ -64,8 +72,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    {/* Utilisation de Link pour une navigation fluide */}
-                    <Link href={item.url}>
+                    <Link href={item.url} prefetch={true}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
@@ -79,10 +86,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  onClick={() => {
-                    // bascule simple du thème
-                    setTheme(theme === "dark" ? "light" : "dark");
-                  }}
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 >
                   <Button variant="ghost" aria-label="Changer le thème">
                     {theme === "dark" ? <Sun /> : <Moon />}
