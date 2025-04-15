@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Timer, Book, Moon, Sun, LogOut } from "lucide-react";
-import { useTheme } from "next-themes"; // Assurez-vous d'importer de "next-themes"
+import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sidebar,
@@ -15,6 +14,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -23,13 +23,6 @@ export function AppSidebar() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
-  const [mounted, setMounted] = useState(false);
-
-  // Eviter les erreurs d'hydratation
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  if (!mounted) return null;
 
   const absencesUrl =
     user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
@@ -48,7 +41,7 @@ export function AppSidebar() {
         console.error("Erreur lors de la déconnexion");
       }
     } catch (error) {
-      console.error("Erreur réseau :", error);
+      console.error("Erreur réseau lors de la déconnexion :", error);
     }
   };
 
@@ -71,10 +64,11 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    {/* Utilisation de Link pour une navigation fluide */}
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
