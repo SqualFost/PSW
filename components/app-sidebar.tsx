@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Timer, Book, Moon, Sun, LogOut } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "next-themes"; // Assurez-vous d'importer de "next-themes"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sidebar,
@@ -16,24 +17,33 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 export function AppSidebar() {
   const router = useRouter();
-  // Utilisation useTheme (hook) pour gérer le thème
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
-  // Quels éléments iront dans le menu de la sidebar
+  // Eviter les erreurs d'hydratation
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
+
+  const absencesUrl =
+    user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
+
   const items = [
-    { title: "Absences / Retards", url: "/absences", icon: Timer },
+    { title: "Absences / Retards", url: absencesUrl, icon: Timer },
     { title: "Réservations", url: "/", icon: Book },
   ];
 
-  // Fonction de gestion de la déconnexion
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
-        router.push("/login"); // Redirection vers la page de login
+        router.push("/login");
       } else {
         console.error("Erreur lors de la déconnexion");
       }
@@ -73,7 +83,13 @@ export function AppSidebar() {
           <SidebarGroupContent className="mt-auto p-4">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild onClick={toggleTheme}>
+                <SidebarMenuButton
+                  asChild
+                  onClick={() => {
+                    // bascule simple du thème
+                    setTheme(theme === "dark" ? "light" : "dark");
+                  }}
+                >
                   <Button variant="ghost" aria-label="Changer le thème">
                     {theme === "dark" ? <Sun /> : <Moon />}
                     <span>

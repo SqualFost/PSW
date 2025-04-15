@@ -1,5 +1,5 @@
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/context/AuthContext";
 import LayoutClient from "@/components/layout-client";
 
@@ -16,13 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <AuthProvider>
-        <ThemeProvider>
-          <body className="font-sans">
+        <body className="font-sans">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <LayoutClient>{children}</LayoutClient>
-          </body>
-        </ThemeProvider>
+          </ThemeProvider>
+        </body>
       </AuthProvider>
     </html>
   );

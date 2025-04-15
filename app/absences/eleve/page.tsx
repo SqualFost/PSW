@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-import { absence } from "@/app/api/user/absence/route";
-import { retard } from "@/app/api/user/retard/route";
+import { absence, retard } from "@/app/api/psw/route";
+
 import { useEffect, useState } from "react";
 
 // Interfaces absences et retards
@@ -30,11 +30,11 @@ function formatDate(date: string): string {
   const dateObj = new Date(date); // Crée un objet Date
 
   // Récupère différentes parties de la date avec gestion format (ajout de 0 si besoin)
+  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+  const heures = dateObj.getHours();
   const jour = dateObj.getDate().toString().padStart(2, "0");
   const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Les mois commencent à 0
   const annee = dateObj.getFullYear();
-  const heures = dateObj.getHours();
-  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
 
   return `${jour}/${mois}/${annee} ${heures}:${minutes}`;
 }
@@ -49,15 +49,19 @@ export default function AbsencesRetardsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Appels API pour récupérer les absences et retards en même temps
+        // On récupère d'abord l'id utilisateur via notre API dédiée
+        const user = await fetch("/api/auth/me");
+        const { id_utilisateur } = await user.json();
+
+        // On appelle l'API des absences avec le bon id
         const [absData, retData] = await Promise.all([
-          absence.getAbsences(),
-          retard.getRetards(),
+          absence.getAbsences(id_utilisateur),
+          retard.getRetards(id_utilisateur),
         ]);
         setAbsences(absData);
         setRetards(retData);
       } catch (error) {
-        console.error("Erreur au chargement des absences, raison : ", error);
+        console.error("Erreur au chargement des données :", error);
       } finally {
         setLoading(false); // Désactive le chargement dès que données récup
       }

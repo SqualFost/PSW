@@ -7,9 +7,10 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
+    ...options,
   });
 
-  // Vérifie si la requête a réussi
+  // Vérifie si la requête est un succès
   if (!res.ok) {
     throw new Error(`Erreur de l'API : ${res.statusText}`);
   }
@@ -17,7 +18,15 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   return res.json(); // Renvoie la réponse en JSON
 }
 
-// Objet pour récupérer les absences
+// On récupère ici les absences, retards et la liste des élèves
 export const absence = {
-  getAbsences: () => fetchAPI("/psw/absence/1"), // Appelle l'API pour récupérer les absences
+  getAbsences: (id: number) => fetchAPI(`/psw/absence/${id}`),
+};
+
+export const retard = {
+  getRetards: (id: number) => fetchAPI(`/psw/absence/${id}`),
+};
+
+export const eleves = {
+  getEleves: () => fetchAPI("/psw/eleve"),
 };

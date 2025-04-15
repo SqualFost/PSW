@@ -15,9 +15,14 @@ export async function middleware(req: NextRequest) {
 
   try {
     const user = JSON.parse(userCookie);
-    if (!user.id_utilisateur || !user.role) {
-      console.log("Cookie 'user' invalide, redirection vers /login");
-      return NextResponse.redirect(new URL("/login", req.url));
+    if (
+      pathname.startsWith("/absences/vie-scolaire") &&
+      user.role === "Eleve"
+    ) {
+      return NextResponse.redirect(new URL("/absences/eleve", req.url));
+    }
+    if (pathname.startsWith("/absences/eleve") && user.role !== "Eleve") {
+      return NextResponse.redirect(new URL("/absences/vie-scolaire", req.url));
     }
   } catch (error) {
     console.error("Erreur lors du parsing du cookie 'user' :", error);
@@ -29,5 +34,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/absences", "/reservations"],
+  matcher: ["/absences/:path*", "/"],
 };
