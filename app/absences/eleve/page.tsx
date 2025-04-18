@@ -137,22 +137,24 @@ export default function AbsencesRetardsPage() {
               ) : retards.length === 0 ? (
                 <p>Aucun retard.</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 divide-y divide-border">
                   {retards.map((retard) => (
                     <div
                       key={retard.horaire}
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{retard.duree} min</p>
+                        <div>
+                          <p className="font-medium">{retard.cours}</p>
+                        </div>
                         <p className="text-sm text-muted-foreground">
-                          {retard.motif}
+                          {formatDate(retard.horaire)} | Durée : {retard.duree}
                         </p>
                       </div>
                       <Badge
                         variant={retard.justifiee ? "default" : "destructive"}
                       >
-                        {retard.justifiee ? "Justifié" : "Non-justifié"}
+                        {retard.justifiee ? "Justifiée" : "Non-justifiée"}
                       </Badge>
                     </div>
                   ))}
