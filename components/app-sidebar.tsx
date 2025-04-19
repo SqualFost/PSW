@@ -64,7 +64,6 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    {/* Utilisation de Link pour une navigation fluide */}
                     <Link href={item.url} prefetch={true}>
                       <item.icon />
                       <span>{item.title}</span>
