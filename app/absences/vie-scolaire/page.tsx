@@ -243,11 +243,13 @@ export default function VieScolairePage() {
             <TabsContent value="retards">
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    <h2 className="text-xl font-semibold">Retards</h2>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5" />
+                      <h2 className="text-xl font-semibold">Retards</h2>
+                    </div>
+                    <Badge variant="outline">Total : {absences.length}</Badge>
                   </div>
-                  <Badge variant="outline">Total : {retards.length}</Badge>
                 </CardHeader>
                 <CardContent>
                   {loading ? (
@@ -255,16 +257,19 @@ export default function VieScolairePage() {
                   ) : retards.length === 0 ? (
                     <p>Aucun retard.</p>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 divide-y divide-border">
                       {retards.map((retard) => (
                         <div
                           key={retard.horaire}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div className="space-y-1">
-                            <p className="font-medium">{retard.duree} min</p>
+                            <div>
+                              <p className="font-medium">{retard.cours}</p>
+                            </div>
                             <p className="text-sm text-muted-foreground">
-                              {retard.motif}
+                              {formatDate(retard.horaire)} | Durée :{" "}
+                              {retard.duree}
                             </p>
                           </div>
                           <Badge
@@ -272,7 +277,7 @@ export default function VieScolairePage() {
                               retard.justifiee ? "default" : "destructive"
                             }
                           >
-                            {retard.justifiee ? "Justifié" : "Non-justifié"}
+                            {retard.justifiee ? "Justifiée" : "Non-justifiée"}
                           </Badge>
                         </div>
                       ))}
