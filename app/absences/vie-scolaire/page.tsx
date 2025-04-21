@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Clock, Search, User } from "lucide-react";
+import { AlertCircle, Search, User } from "lucide-react";
 import { eleves, absence, retard } from "@/app/api/psw/route";
 import { Button } from "@/components/ui/button";
 import {
