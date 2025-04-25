@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-import { absence, retard } from "@/app/api/psw/route";
 
 import { useEffect, useState } from "react";
 
@@ -50,14 +49,17 @@ export default function AbsencesRetardsPage() {
     async function fetchData() {
       try {
         // On récupère d'abord l'id utilisateur via notre API dédiée
-        const user = await fetch("/api/auth/me");
+        const user = await fetch("/api/infoEleve/me");
         const { id_utilisateur } = await user.json();
 
         // On appelle l'API des absences avec le bon id
-        const [absData, retData] = await Promise.all([
-          absence.getAbsences(id_utilisateur),
-          retard.getRetards(id_utilisateur),
+        const [absRes, retRes] = await Promise.all([
+          fetch(`/api/infoEleve/absence/${id_utilisateur}`),
+          fetch(`/api/infoEleve/retard/${id_utilisateur}`)
         ]);
+        const absData = await absRes.json();
+        const retData = await retRes.json();
+
         setAbsences(absData);
         setRetards(retData);
       } catch (error) {
@@ -103,7 +105,9 @@ export default function AbsencesRetardsPage() {
                     >
                       <div className="space-y-1">
                         <div>
-                          <p className="font-medium">{absence.cours}</p>
+                          {absence.motif == null ? (
+                            <p>{absence.cours} | Motif : Aucun motif</p>
+                          ) : ( <p>{absence.cours} | Motif : {absence.motif}</p>)}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {formatDate(absence.horaire)}
@@ -145,7 +149,9 @@ export default function AbsencesRetardsPage() {
                     >
                       <div className="space-y-1">
                         <div>
-                          <p className="font-medium">{retard.cours}</p>
+                        {retard.motif == null ? (
+                            <p>{retard.cours} | Motif : Aucun motif</p>
+                          ) : ( <p>{retard.cours} | Motif : {retard.motif}</p>)}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {formatDate(retard.horaire)} | Durée : {retard.duree}

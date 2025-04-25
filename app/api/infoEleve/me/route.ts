@@ -10,6 +10,7 @@ export async function GET() {
     // Si cookie encodé en URI, on le décode
     const decoded = decodeURIComponent(userCookie.value);
     const user = JSON.parse(decoded);
+    // renvoie id utilisateur et rôle
     return NextResponse.json({
       id_utilisateur: user.id_utilisateur,
       role: user.role,

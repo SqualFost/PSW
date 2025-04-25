@@ -1,123 +1,103 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Search, User } from "lucide-react";
-import { eleves, absence, retard } from "@/app/api/psw/route";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AlertCircle, Search, User, MoveLeft } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 // Interfaces
 interface Etudiant {
-  id: number;
-  nom: string;
-  prenom: string;
-  classe: string;
+  id: number
+  nom: string
+  prenom: string
+  classe: string
 }
 
 interface Absence {
-  id: number;
-  cours: string;
-  horaire: string;
-  justifiee: boolean;
-  motif: string;
+  id: number
+  cours: string
+  horaire: string
+  justifiee: boolean
+  motif: string
 }
 
 interface Retard {
-  cours: string;
-  horaire: string;
-  duree: number;
-  justifiee: boolean;
-  motif: string;
+  cours: string
+  horaire: string
+  duree: number
+  justifiee: boolean
+  motif: string
 }
 
-// Format de la date: "jj/mm/aaaa hh:mm"
 function formatDate(date: string): string {
-  const dateObj = new Date(date);
-  const jour = dateObj.getDate().toString().padStart(2, "0");
-  const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-  const annee = dateObj.getFullYear();
-  const heures = dateObj.getHours();
-  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-
-  return `${jour}/${mois}/${annee} ${heures}:${minutes}`;
-}
-
-// On appelle tous les APIs
-async function getEtudiants(): Promise<Etudiant[]> {
-  return await eleves.getEleves();
-}
-
-async function getAbsences(etudiantId: number): Promise<Absence[]> {
-  return await absence.getAbsences(etudiantId);
-}
-
-async function getRetards(etudiantId: number): Promise<Retard[]> {
-  return await retard.getRetards(etudiantId);
+  const dateObj = new Date(date)
+  const jour = dateObj.getDate().toString().padStart(2, "0")
+  const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0")
+  const annee = dateObj.getFullYear()
+  const heures = dateObj.getHours()
+  const minutes = dateObj.getMinutes().toString().padStart(2, "0")
+  return `${jour}/${mois}/${annee} ${heures}:${minutes}`
 }
 
 export default function VieScolairePage() {
-  const [etudiants, setEtudiants] = useState<Etudiant[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const [etudiantSelectionne, setetudiantSelectionne] =
-    useState<Etudiant | null>(null);
-  const [absences, setAbsences] = useState<Absence[]>([]);
-  const [retards, setRetards] = useState<Retard[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [etudiants, setEtudiants] = useState<Etudiant[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [open, setOpen] = useState(false)
+  const [etudiantSelectionne, setetudiantSelectionne] = useState<Etudiant | null>(null)
+  const [absences, setAbsences] = useState<Absence[]>([])
+  const [retards, setRetards] = useState<Retard[]>([])
+  const [loading, setLoading] = useState(false)
 
-  // Récupération des élèves via l'API
+  // Récupération des élèves via API
   useEffect(() => {
     async function fetchEtudiants() {
       try {
-        const data = await getEtudiants();
-        setEtudiants(data);
+        const response = await fetch("/api/infoEleve/eleve")
+        const data = await response.json()
+        setEtudiants(data)
       } catch (error) {
-        console.error("Erreur lors de la récupération des élèves:", error);
+        console.error("Erreur lors de la récupération des élèves:", error)
       }
     }
-    fetchEtudiants();
-  });
+    fetchEtudiants()
+  }, [])
 
-  // Filtrage de recherche des étudiants
+  // Filtrage de recherche
   const etudiantFiltre = etudiants.filter(
     (etudiant) =>
       etudiant.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      etudiant.prenom.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      etudiant.prenom.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
 
-  // On selectionne l'etudiant et lui charge ses abs/ret
-  const handleSelectEtudiant = async (etudiant: Etudiant) => {
-    setetudiantSelectionne(etudiant);
-    setOpen(false);
+  // Fonct° pour recup absences/retards
+  const fetchAbsencesRetards = async (id?: number) => {
     setLoading(true);
-
     try {
-      const [absencesData, retardsData] = await Promise.all([
-        getAbsences(etudiant.id),
-        getRetards(etudiant.id),
+      const [absRes, retRes] = await Promise.all([
+        fetch(`/api/infoEleve/absence/${id}`),
+        fetch(`/api/infoEleve/retard/${id}`),
       ]);
-      setAbsences(absencesData);
-      setRetards(retardsData);
+      const absData = await absRes.json();
+      const retData = await retRes.json();
+
+      setAbsences(absData);
+      setRetards(retData);
     } catch (error) {
       console.error("Erreur lors de la récupération des données:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // quand eleve selectionne
+  const handleSelectEtudiant = async (etudiant: Etudiant) => {
+    setetudiantSelectionne(etudiant);
+    setOpen(false);
+    await fetchAbsencesRetards(etudiant.id);
   };
 
   return (
@@ -134,12 +114,7 @@ export default function VieScolairePage() {
           <div className="flex flex-col gap-4">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between"
-                >
+                <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
                   {etudiantSelectionne
                     ? `${etudiantSelectionne.prenom} ${etudiantSelectionne.nom} (${etudiantSelectionne.classe})`
                     : "Rechercher un étudiant..."}
@@ -165,9 +140,7 @@ export default function VieScolairePage() {
                           <span>
                             {etudiant.prenom} {etudiant.nom}
                           </span>
-                          <span className="ml-2 text-sm text-muted-foreground">
-                            {etudiant.classe}
-                          </span>
+                          <span className="ml-2 text-sm text-muted-foreground">{etudiant.classe}</span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -175,6 +148,34 @@ export default function VieScolairePage() {
                 </Command>
               </PopoverContent>
             </Popover>
+
+            {!etudiantSelectionne && (
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Liste des élèves</h3>
+                <div className="border rounded-md max-h-60 overflow-y-auto">
+                  {etudiants.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">Chargement des élèves...</div>
+                  ) : (
+                    <div className="divide-y">
+                      {etudiants.map((etudiant) => (
+                        <div
+                          key={etudiant.id}
+                          className="p-3 hover:bg-muted/50 cursor-pointer"
+                          onClick={() => handleSelectEtudiant(etudiant)}
+                        >
+                          <div className="flex justify-between items-center">
+                            <span>
+                              {etudiant.prenom} {etudiant.nom}
+                            </span>
+                            <span className="text-sm text-muted-foreground">{etudiant.classe}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -182,6 +183,10 @@ export default function VieScolairePage() {
       {etudiantSelectionne && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setetudiantSelectionne(null)} className="mr-2">
+            <MoveLeft className="mr-1 h-4 w-4" />
+              Retour
+            </Button>
             <h2 className="text-2xl font-semibold">
               {etudiantSelectionne.prenom} {etudiantSelectionne.nom}
             </h2>
@@ -220,15 +225,9 @@ export default function VieScolairePage() {
                         >
                           <div className="space-y-1">
                             <p className="font-medium">{absence.cours}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {formatDate(absence.horaire)}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{formatDate(absence.horaire)}</p>
                           </div>
-                          <Badge
-                            variant={
-                              absence.justifiee ? "default" : "destructive"
-                            }
-                          >
+                          <Badge variant={absence.justifiee ? "default" : "destructive"}>
                             {absence.justifiee ? "Justifiée" : "Non-justifiée"}
                           </Badge>
                         </div>
@@ -248,7 +247,7 @@ export default function VieScolairePage() {
                       <AlertCircle className="h-5 w-5" />
                       <h2 className="text-xl font-semibold">Retards</h2>
                     </div>
-                    <Badge variant="outline">Total : {absences.length}</Badge>
+                    <Badge variant="outline">Total : {retards.length}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -268,15 +267,10 @@ export default function VieScolairePage() {
                               <p className="font-medium">{retard.cours}</p>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              {formatDate(retard.horaire)} | Durée :{" "}
-                              {retard.duree}
+                              {formatDate(retard.horaire)} | Durée : {retard.duree}
                             </p>
                           </div>
-                          <Badge
-                            variant={
-                              retard.justifiee ? "default" : "destructive"
-                            }
-                          >
+                          <Badge variant={retard.justifiee ? "default" : "destructive"}>
                             {retard.justifiee ? "Justifiée" : "Non-justifiée"}
                           </Badge>
                         </div>
@@ -290,5 +284,5 @@ export default function VieScolairePage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -17,7 +17,7 @@ interface Salle {
 }
 
 // Fonction pour générer des salles aléatoires
-const genererSalles = (nombre: number, date: Date): Salle[] => {
+const genererSalles = (nombre: number): Salle[] => {
   return Array.from({ length: nombre }, (_, i) => {
     const capacite = Math.floor(Math.random() * 30) + 10;
     const estUtilisee = Math.random() > 0.4;
@@ -48,7 +48,7 @@ export default function Home() {
 
   // Mise à jour des salles lors du changement de date
   useEffect(() => {
-    setSalles(genererSalles(300, dateSelectionnee));
+    setSalles(genererSalles(300));
   }, [dateSelectionnee]);
 
   const jourPrecedent = useCallback(() => {
