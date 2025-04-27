@@ -6,33 +6,7 @@ import { SallesHeader } from "@/components/salles/SalleHeader";
 import { SallesGrid } from "@/components/salles/SalleGrid";
 import { SallesPagination } from "@/components/salles/SallePagination";
 import { SallesDetailsDrawer } from "@/components/salles/SalleDrawer";
-
-// Structure d'une salle
-interface Salle {
-  id: number;
-  nom: string;
-  capacite: number;
-  occupation: number;
-  estUtilisee: boolean;
-}
-
-// Fonction pour générer des salles aléatoires
-const genererSalles = (nombre: number): Salle[] => {
-  return Array.from({ length: nombre }, (_, i) => {
-    const capacite = Math.floor(Math.random() * 30) + 10;
-    const estUtilisee = Math.random() > 0.4;
-    const occupation = estUtilisee
-      ? Math.floor(Math.random() * capacite) + 1
-      : 0;
-    return {
-      id: i + 1,
-      nom: `Salle ${i + 1}`,
-      capacite,
-      occupation,
-      estUtilisee,
-    };
-  });
-};
+import { Salle, Activite } from "@/types";
 
 export default function Home() {
   // États principaux
@@ -41,16 +15,33 @@ export default function Home() {
   const [salleSelectionnee, setSalleSelectionnee] = useState<Salle | null>(
     null
   );
+  const [activite, setActivite] = useState<Activite | null>(null);
   const [termeRecherche, setTermeRecherche] = useState("");
   const [filtreOccupation, setFiltreOccupation] = useState<string>("tout");
   const sallesParPage = 30;
   const [pageCourante, setPageCourante] = useState(1);
 
-  // Mise à jour des salles lors du changement de date
+  // Appel API pour récup toutes les salles
   useEffect(() => {
-    setSalles(genererSalles(300));
+    async function fetchSalles() {
+      try {
+        const response = await fetch("/api/salle/listeSalles");
+        const data = await response.json();
+        const sallesFromApi: Salle[] = data.map((item: Salle) => ({
+          id: item.id,
+          nom: item.numero,
+          estUtilisee: item.statut,
+          numero: item.numero,
+        }));
+        setSalles(sallesFromApi);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des salles:", error);
+      }
+    }
+    fetchSalles();
   }, [dateSelectionnee]);
 
+  // Navigat° entre jours
   const jourPrecedent = useCallback(() => {
     setDateSelectionnee((datePrecedente) => subDays(datePrecedente, 1));
   }, []);
@@ -59,30 +50,33 @@ export default function Home() {
     setDateSelectionnee((datePrecedente) => addDays(datePrecedente, 1));
   }, []);
 
+  // Filtrage des salles par recherche et occupat°
   const sallesFiltrees = useMemo(() => {
     return salles.filter((salle) => {
       const correspondRecherche = salle.nom
         .toLowerCase()
         .includes(termeRecherche.toLowerCase());
-      if (filtreOccupation === "tout") return correspondRecherche;
-      if (filtreOccupation === "utilise")
-        return correspondRecherche && salle.estUtilisee;
-      if (filtreOccupation === "disponible")
-        return correspondRecherche && !salle.estUtilisee;
-      if (filtreOccupation === "complet")
-        return (
-          correspondRecherche &&
-          salle.estUtilisee &&
-          salle.occupation === salle.capacite
-        );
-      if (filtreOccupation === "quasiComplet")
-        return (
-          correspondRecherche &&
-          salle.estUtilisee &&
-          salle.occupation >= salle.capacite * 0.8 &&
-          salle.occupation < salle.capacite
-        );
-      return correspondRecherche;
+      switch (filtreOccupation) {
+        case "utilise":
+          return correspondRecherche && salle.estUtilisee;
+        case "disponible":
+          return correspondRecherche && !salle.estUtilisee;
+        case "complet":
+          return (
+            correspondRecherche &&
+            salle.estUtilisee &&
+            salle.occupation === salle.capacite
+          );
+        case "quasiComplet":
+          return (
+            correspondRecherche &&
+            salle.estUtilisee &&
+            salle.occupation >= salle.capacite * 0.8 &&
+            salle.occupation < salle.capacite
+          );
+        default:
+          return correspondRecherche;
+      }
     });
   }, [salles, termeRecherche, filtreOccupation]);
 
@@ -92,21 +86,25 @@ export default function Home() {
 
   const sallesCourantes = useMemo(() => {
     const debut = (pageCourante - 1) * sallesParPage;
-    const fin = debut + sallesParPage;
-    return sallesFiltrees.slice(debut, fin);
+    return sallesFiltrees.slice(debut, debut + sallesParPage);
   }, [sallesFiltrees, pageCourante, sallesParPage]);
 
-  const obtenirPourcentageOccupation = (salle: Salle) => {
-    return (salle.occupation / salle.capacite) * 100;
+  // Fonct° pour récup l'activité d'une salle
+  const fetchSalleActivite = async (salleId: number) => {
+    try {
+      const response = await fetch(`/api/salle/infosSalles/${salleId}`);
+      const data: Activite = await response.json();
+      setActivite(data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'activité:", error);
+      setActivite(null);
+    }
   };
 
-  const obtenirCouleurOccupation = (salle: Salle) => {
-    if (!salle.estUtilisee) return "bg-gray-200";
-    const pourcentage = obtenirPourcentageOccupation(salle);
-    if (pourcentage >= 90) return "bg-red-500";
-    if (pourcentage >= 70) return "bg-orange-400";
-    if (pourcentage >= 50) return "bg-yellow-300";
-    return "bg-green-400";
+  // Lors de la sélect° d'une salle, on récup l'activité
+  const handleSelectSalle = (salle: Salle) => {
+    setSalleSelectionnee(salle);
+    fetchSalleActivite(salle.id);
   };
 
   const changerPage = useCallback((nouvellePage: number) => {
@@ -132,9 +130,8 @@ export default function Home() {
 
       <SallesGrid
         salles={sallesCourantes}
-        obtenirPourcentageOccupation={obtenirPourcentageOccupation}
-        obtenirCouleurOccupation={obtenirCouleurOccupation}
-        onSelectSalle={setSalleSelectionnee}
+        // Ici, on passe handleSelectSalle pour sélectionner et charger l'activité de la salle
+        onSelectSalle={handleSelectSalle}
       />
 
       {pagesTotales > 1 && (
@@ -149,9 +146,12 @@ export default function Home() {
         <SallesDetailsDrawer
           salleSelectionnee={salleSelectionnee}
           dateSelectionnee={dateSelectionnee}
-          obtenirPourcentageOccupation={obtenirPourcentageOccupation}
-          obtenirCouleurOccupation={obtenirCouleurOccupation}
-          onClose={() => setSalleSelectionnee(null)}
+          // / On passe l'activité récupérée au drawer
+          activite={activite}
+          onClose={() => {
+            setSalleSelectionnee(null);
+            setActivite(null);
+          }}
         />
       )}
     </div>

@@ -2,12 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface SallesPaginationProps {
-  pageCourante: number;
-  pagesTotales: number;
-  onPageChange: (nouvellePage: number) => void;
-}
+import { SallesPaginationProps } from "@/types";
 
 export function SallesPagination({
   pageCourante,

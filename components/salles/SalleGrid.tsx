@@ -3,28 +3,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Unlock, Users } from "lucide-react";
+import { SallesGridProps } from "@/types";
 
-interface Salle {
-  id: number;
-  nom: string;
-  capacite: number;
-  occupation: number;
-  estUtilisee: boolean;
-}
-
-interface SallesGridProps {
-  salles: Salle[];
-  obtenirPourcentageOccupation: (salle: Salle) => number;
-  obtenirCouleurOccupation: (salle: Salle) => string;
-  onSelectSalle: (salle: Salle) => void;
-}
-
-export function SallesGrid({
-  salles,
-  obtenirPourcentageOccupation,
-  obtenirCouleurOccupation,
-  onSelectSalle,
-}: SallesGridProps) {
+export function SallesGrid({ salles, onSelectSalle }: SallesGridProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
       {salles.map((salle) => (
@@ -50,21 +31,10 @@ export function SallesGrid({
                 {salle.occupation}/{salle.capacite}
               </span>
             </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full ${obtenirCouleurOccupation(salle)}`}
-                style={{ width: `${obtenirPourcentageOccupation(salle)}%` }}
-              />
-            </div>
             <div className="mt-2 flex justify-between items-center">
               <Badge variant={salle.estUtilisee ? "destructive" : "outline"}>
                 {salle.estUtilisee ? "Occupée" : "Libre"}
               </Badge>
-              <span className="text-xs">
-                {salle.estUtilisee
-                  ? `${Math.round(obtenirPourcentageOccupation(salle))}%`
-                  : "0%"}
-              </span>
             </div>
           </CardContent>
         </Card>

@@ -1,77 +1,61 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertCircle, Search, User, MoveLeft } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-
-// Interfaces
-interface Etudiant {
-  id: number
-  nom: string
-  prenom: string
-  classe: string
-}
-
-interface Absence {
-  id: number
-  cours: string
-  horaire: string
-  justifiee: boolean
-  motif: string
-}
-
-interface Retard {
-  cours: string
-  horaire: string
-  duree: number
-  justifiee: boolean
-  motif: string
-}
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Search, User, MoveLeft } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Absence, Retard, Etudiant } from "@/types";
+import { format } from "date-fns";
 
 function formatDate(date: string): string {
-  const dateObj = new Date(date)
-  const jour = dateObj.getDate().toString().padStart(2, "0")
-  const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0")
-  const annee = dateObj.getFullYear()
-  const heures = dateObj.getHours()
-  const minutes = dateObj.getMinutes().toString().padStart(2, "0")
-  return `${jour}/${mois}/${annee} ${heures}:${minutes}`
+  return format(new Date(date), "dd/MM/yyyy HH:mm");
 }
 
 export default function VieScolairePage() {
-  const [etudiants, setEtudiants] = useState<Etudiant[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [open, setOpen] = useState(false)
-  const [etudiantSelectionne, setetudiantSelectionne] = useState<Etudiant | null>(null)
-  const [absences, setAbsences] = useState<Absence[]>([])
-  const [retards, setRetards] = useState<Retard[]>([])
-  const [loading, setLoading] = useState(false)
+  const [etudiants, setEtudiants] = useState<Etudiant[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [etudiantSelectionne, setetudiantSelectionne] =
+    useState<Etudiant | null>(null);
+  const [absences, setAbsences] = useState<Absence[]>([]);
+  const [retards, setRetards] = useState<Retard[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Récupération des élèves via API
   useEffect(() => {
     async function fetchEtudiants() {
       try {
-        const response = await fetch("/api/infoEleve/eleve")
-        const data = await response.json()
-        setEtudiants(data)
+        const response = await fetch("/api/infoEleve/eleve");
+        const data = await response.json();
+        setEtudiants(data);
       } catch (error) {
-        console.error("Erreur lors de la récupération des élèves:", error)
+        console.error("Erreur lors de la récupération des élèves:", error);
       }
     }
-    fetchEtudiants()
-  }, [])
+    fetchEtudiants();
+  }, []);
 
   // Filtrage de recherche
   const etudiantFiltre = etudiants.filter(
     (etudiant) =>
       etudiant.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      etudiant.prenom.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      etudiant.prenom.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Fonct° pour recup absences/retards
   const fetchAbsencesRetards = async (id?: number) => {
@@ -114,7 +98,12 @@ export default function VieScolairePage() {
           <div className="flex flex-col gap-4">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between"
+                >
                   {etudiantSelectionne
                     ? `${etudiantSelectionne.prenom} ${etudiantSelectionne.nom} (${etudiantSelectionne.classe})`
                     : "Rechercher un étudiant..."}
@@ -140,7 +129,9 @@ export default function VieScolairePage() {
                           <span>
                             {etudiant.prenom} {etudiant.nom}
                           </span>
-                          <span className="ml-2 text-sm text-muted-foreground">{etudiant.classe}</span>
+                          <span className="ml-2 text-sm text-muted-foreground">
+                            {etudiant.classe}
+                          </span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -154,7 +145,9 @@ export default function VieScolairePage() {
                 <h3 className="text-sm font-medium mb-2">Liste des élèves</h3>
                 <div className="border rounded-md max-h-60 overflow-y-auto">
                   {etudiants.length === 0 ? (
-                    <div className="p-4 text-center text-muted-foreground">Chargement des élèves...</div>
+                    <div className="p-4 text-center text-muted-foreground">
+                      Chargement des élèves...
+                    </div>
                   ) : (
                     <div className="divide-y">
                       {etudiants.map((etudiant) => (
@@ -167,7 +160,9 @@ export default function VieScolairePage() {
                             <span>
                               {etudiant.prenom} {etudiant.nom}
                             </span>
-                            <span className="text-sm text-muted-foreground">{etudiant.classe}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {etudiant.classe}
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -183,8 +178,13 @@ export default function VieScolairePage() {
       {etudiantSelectionne && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setetudiantSelectionne(null)} className="mr-2">
-            <MoveLeft className="mr-1 h-4 w-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setetudiantSelectionne(null)}
+              className="mr-2"
+            >
+              <MoveLeft className="mr-1 h-4 w-4" />
               Retour
             </Button>
             <h2 className="text-2xl font-semibold">
@@ -218,16 +218,22 @@ export default function VieScolairePage() {
                     <p>Aucune absence.</p>
                   ) : (
                     <div className="space-y-4 divide-y divide-border">
-                      {absences.map((absence) => (
+                      {absences.map((absence, index) => (
                         <div
-                          key={absence.horaire}
+                          key={`${absence.horaire}-${index}`}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div className="space-y-1">
                             <p className="font-medium">{absence.cours}</p>
-                            <p className="text-sm text-muted-foreground">{formatDate(absence.horaire)}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {formatDate(absence.horaire)}
+                            </p>
                           </div>
-                          <Badge variant={absence.justifiee ? "default" : "destructive"}>
+                          <Badge
+                            variant={
+                              absence.justifiee ? "default" : "destructive"
+                            }
+                          >
                             {absence.justifiee ? "Justifiée" : "Non-justifiée"}
                           </Badge>
                         </div>
@@ -257,9 +263,9 @@ export default function VieScolairePage() {
                     <p>Aucun retard.</p>
                   ) : (
                     <div className="space-y-4 divide-y divide-border">
-                      {retards.map((retard) => (
+                      {retards.map((retard, index) => (
                         <div
-                          key={retard.horaire}
+                          key={`${retard.horaire}-${index}`}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div className="space-y-1">
@@ -267,10 +273,15 @@ export default function VieScolairePage() {
                               <p className="font-medium">{retard.cours}</p>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              {formatDate(retard.horaire)} | Durée : {retard.duree}
+                              {formatDate(retard.horaire)} | Durée :{" "}
+                              {retard.duree}
                             </p>
                           </div>
-                          <Badge variant={retard.justifiee ? "default" : "destructive"}>
+                          <Badge
+                            variant={
+                              retard.justifiee ? "default" : "destructive"
+                            }
+                          >
                             {retard.justifiee ? "Justifiée" : "Non-justifiée"}
                           </Badge>
                         </div>
@@ -284,5 +295,5 @@ export default function VieScolairePage() {
         </div>
       )}
     </div>
-  )
+  );
 }

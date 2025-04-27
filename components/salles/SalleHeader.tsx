@@ -12,17 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface SallesHeaderProps {
-  dateSelectionnee: Date;
-  onJourPrecedent: () => void;
-  onJourSuivant: () => void;
-  termeRecherche: string;
-  setTermeRecherche: (val: string) => void;
-  filtreOccupation: string;
-  setFiltreOccupation: (val: string) => void;
-  onResetPage: () => void;
-}
+import { SallesHeaderProps } from "@/types";
 
 export function SallesHeader({
   dateSelectionnee,
@@ -80,10 +70,10 @@ export function SallesHeader({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="tout">Toutes les salles</SelectItem>
-            <SelectItem value="utilise">En utilisation</SelectItem>
             <SelectItem value="disponible">Disponibles</SelectItem>
-            <SelectItem value="complet">Complètes</SelectItem>
+            <SelectItem value="utilise">En utilisation</SelectItem>
             <SelectItem value="quasiComplet">Presque complètes</SelectItem>
+            <SelectItem value="complet">Complètes</SelectItem>
           </SelectContent>
         </Select>
       </div>

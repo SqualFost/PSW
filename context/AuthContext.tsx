@@ -1,17 +1,7 @@
 "use client";
 import { createContext, useContext, useState } from "react";
-
+import { AuthContextType, User } from "@/types";
 // Définition des interfaces User et AuthContextType
-interface User {
-  username: string;
-  id_utilisateur?: number;
-  role?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
-}
 
 // Création du contexte d'authentification
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

@@ -4,38 +4,12 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
-
 import { useEffect, useState } from "react";
+import { Absence, Retard } from "@/types";
+import { format } from "date-fns";
 
-// Interfaces absences et retards
-interface Absence {
-  id: number;
-  cours: string;
-  horaire: string;
-  justifiee: boolean;
-  motif: string;
-}
-
-interface Retard {
-  cours: string;
-  horaire: string;
-  duree: number;
-  justifiee: boolean;
-  motif: string;
-}
-
-// Formate la date de la sorte: "jj/mm/aaaa hh:mm"
 function formatDate(date: string): string {
-  const dateObj = new Date(date); // Crée un objet Date
-
-  // Récupère différentes parties de la date avec gestion format (ajout de 0 si besoin)
-  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-  const heures = dateObj.getHours();
-  const jour = dateObj.getDate().toString().padStart(2, "0");
-  const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Les mois commencent à 0
-  const annee = dateObj.getFullYear();
-
-  return `${jour}/${mois}/${annee} ${heures}:${minutes}`;
+  return format(new Date(date), "dd/MM/yyyy HH:mm");
 }
 
 export default function AbsencesRetardsPage() {
@@ -55,7 +29,7 @@ export default function AbsencesRetardsPage() {
         // On appelle l'API des absences avec le bon id
         const [absRes, retRes] = await Promise.all([
           fetch(`/api/infoEleve/absence/${id_utilisateur}`),
-          fetch(`/api/infoEleve/retard/${id_utilisateur}`)
+          fetch(`/api/infoEleve/retard/${id_utilisateur}`),
         ]);
         const absData = await absRes.json();
         const retData = await retRes.json();
@@ -98,16 +72,20 @@ export default function AbsencesRetardsPage() {
                 <p>Aucune absence.</p>
               ) : (
                 <div className="space-y-4 divide-y divide-border">
-                  {absences.map((absence) => (
+                  {absences.map((absence, index) => (
                     <div
-                      key={absence.horaire}
+                      key={`${absence.horaire}-${index}`}
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                     >
                       <div className="space-y-1">
                         <div>
                           {absence.motif == null ? (
                             <p>{absence.cours} | Motif : Aucun motif</p>
-                          ) : ( <p>{absence.cours} | Motif : {absence.motif}</p>)}
+                          ) : (
+                            <p>
+                              {absence.cours} | Motif : {absence.motif}
+                            </p>
+                          )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {formatDate(absence.horaire)}
@@ -142,16 +120,20 @@ export default function AbsencesRetardsPage() {
                 <p>Aucun retard.</p>
               ) : (
                 <div className="space-y-4 divide-y divide-border">
-                  {retards.map((retard) => (
+                  {retards.map((retard, index) => (
                     <div
-                      key={retard.horaire}
+                      key={`${retard.horaire}-${index}`}
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                     >
                       <div className="space-y-1">
                         <div>
-                        {retard.motif == null ? (
+                          {retard.motif == null ? (
                             <p>{retard.cours} | Motif : Aucun motif</p>
-                          ) : ( <p>{retard.cours} | Motif : {retard.motif}</p>)}
+                          ) : (
+                            <p>
+                              {retard.cours} | Motif : {retard.motif}
+                            </p>
+                          )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {formatDate(retard.horaire)} | Durée : {retard.duree}

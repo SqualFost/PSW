@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     // Récup données de la réponse
     const data = await Response.json();
 
-    // Vérification si connexion bien réussi
+    // Vérification si connexion non réussie
     if (!data.success) {
       return NextResponse.json(
         { error: "Identifiant ou mot de passe incorrect" },

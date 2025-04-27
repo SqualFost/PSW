@@ -24,12 +24,15 @@ export function AppSidebar() {
   const router = useRouter();
   const { user } = useAuth();
 
+  // URL de la page en fonction role de user
   const absencesUrl =
     user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
 
+
+  // Liens des differentes pages
   const items = [
     { title: "Absences / Retards", url: absencesUrl, icon: Timer },
-    { title: "Réservations", url: "/", icon: Book },
+    { title: "Salles de cours", url: "/", icon: Book },
   ];
 
   const handleLogout = async () => {
