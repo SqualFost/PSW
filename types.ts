@@ -90,3 +90,14 @@ export interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => Promise<boolean>;
 }
+
+export interface Eleve {
+  id_utilisateur: number;
+  nom: string;
+  prenom: string;
+  classe: string;
+}
+
+export interface MeResponse {
+  id: number;
+}

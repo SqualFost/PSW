@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Timer, Book, LogOut } from "lucide-react";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -18,18 +19,46 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { Eleve, MeResponse } from "@/types";
 
 export function AppSidebar() {
-
   const router = useRouter();
   const { user } = useAuth();
+  const [eleveData, setEleveData] = useState<Eleve>();
 
-  // URL de la page en fonction role de user
+  useEffect(() => {
+    async function fetchUserAndEleve() {
+      try {
+        const meRes = await fetch("/api/infoEleve/me");
+        const meData = await meRes.json();
+        console.log("Utilisateur connecté:", meData);
+        const eleveRes = await fetch("/api/infoEleve/eleve");
+        const eleves = await eleveRes.json();
+        console.log("Liste des élèves:", eleves);
+        const found = eleves.find(
+          (item: MeResponse) => item.id === meData.id_utilisateur
+        );
+        console.log("Élève trouvé:", found);
+        setEleveData(found || null);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des données utilisateur:",
+          error
+        );
+      }
+    }
+    fetchUserAndEleve();
+  }, []);
+
+  // Calcul initiales (si admin ou vie-scolaire, j'affiche rien)
+  const initials = eleveData
+    ? `${eleveData.prenom[0]}${eleveData.nom[0]}`.toUpperCase()
+    : "";
+
   const absencesUrl =
     user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
 
-
-  // Liens des differentes pages
+  // Liens de navigation
   const items = [
     { title: "Absences / Retards", url: absencesUrl, icon: Timer },
     { title: "Salles de cours", url: "/", icon: Book },
@@ -58,7 +87,7 @@ export function AppSidebar() {
         <SidebarGroup className="flex flex-col h-full justify-between">
           <SidebarGroupLabel className="flex items-center justify-center my-4">
             <Avatar>
-              <AvatarFallback>TG</AvatarFallback>
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </SidebarGroupLabel>
           <SidebarGroupContent>
