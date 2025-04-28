@@ -4,8 +4,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { subDays, addDays } from "date-fns";
 import { SallesHeader } from "@/components/salles/SalleHeader";
 import { SallesGrid } from "@/components/salles/SalleGrid";
-import { SallesPagination } from "@/components/salles/SallePagination";
 import { SallesDetailsDrawer } from "@/components/salles/SalleDrawer";
+import { SallesPagination } from "@/components/salles/SallePagination";
 import { Salle, Activite } from "@/types";
 
 export default function Home() {
@@ -40,6 +40,20 @@ export default function Home() {
     }
     fetchSalles();
   }, [dateSelectionnee]);
+
+  const [userRole, setUserRole] = useState<{
+    role: string;
+  } | null>(null);
+
+  async function fetchUserRole() {
+    try {
+      const res = await fetch("/api/infoEleve/me");
+      const data = await res.json();
+      setUserRole({ role: data.role });
+    } catch (error) {
+      console.error("Erreur lors de la récupération du rôle :", error);
+    }
+  }
 
   // Navigat° entre jours
   const jourPrecedent = useCallback(() => {
@@ -105,6 +119,7 @@ export default function Home() {
   const handleSelectSalle = (salle: Salle) => {
     setSalleSelectionnee(salle);
     fetchSalleActivite(salle.id);
+    fetchUserRole();
   };
 
   const changerPage = useCallback((nouvellePage: number) => {
@@ -152,6 +167,7 @@ export default function Home() {
             setSalleSelectionnee(null);
             setActivite(null);
           }}
+          role={userRole?.role}
         />
       )}
     </div>

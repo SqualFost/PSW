@@ -18,27 +18,31 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
 import { Eleve, MeResponse } from "@/types";
 
 export function AppSidebar() {
   const router = useRouter();
-  const { user } = useAuth();
   const [eleveData, setEleveData] = useState<Eleve>();
+  const [userData, setUserData] = useState<{
+    id_utilisateur: number;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchUserAndEleve() {
       try {
         const meRes = await fetch("/api/infoEleve/me");
         const meData = await meRes.json();
-        console.log("Utilisateur connecté:", meData);
+        setUserData({
+          id_utilisateur: meData.id_utilisateur,
+          role: meData.role,
+        });
+
         const eleveRes = await fetch("/api/infoEleve/eleve");
         const eleves = await eleveRes.json();
-        console.log("Liste des élèves:", eleves);
         const found = eleves.find(
           (item: MeResponse) => item.id === meData.id_utilisateur
         );
-        console.log("Élève trouvé:", found);
         setEleveData(found || null);
       } catch (error) {
         console.error(
@@ -50,17 +54,14 @@ export function AppSidebar() {
     fetchUserAndEleve();
   }, []);
 
-  // Calcul initiales (si admin ou vie-scolaire, j'affiche rien)
+  // Calcul initiales (si admin ou vie-scolaire, j'affiche Admin ou PS)
   const initials = eleveData
     ? `${eleveData.prenom[0]}${eleveData.nom[0]}`.toUpperCase()
-    : "";
-
-  const absencesUrl =
-    user?.role === "Eleve" ? "/absences/eleve" : "/absences/vie-scolaire";
+    : userData?.role;
 
   // Liens de navigation
   const items = [
-    { title: "Absences / Retards", url: absencesUrl, icon: Timer },
+    { title: "Absences / Retards", url: "/absences/eleve", icon: Timer },
     { title: "Salles de cours", url: "/", icon: Book },
   ];
 
@@ -86,11 +87,11 @@ export function AppSidebar() {
         </div>
         <SidebarGroup className="flex flex-col h-full justify-between">
           <SidebarGroupLabel className="flex items-center justify-center my-4">
-            <Avatar>
+            <Avatar className="w-16 h-16 mt-6">
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="mt-6">
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>

@@ -61,6 +61,7 @@ export interface SallesDetailsDrawerProps {
   dateSelectionnee: Date;
   activite: Activite | null;
   onClose: () => void;
+  role: string | undefined;
 }
 
 export interface SallesHeaderProps {
@@ -96,6 +97,7 @@ export interface Eleve {
   nom: string;
   prenom: string;
   classe: string;
+  role: string;
 }
 
 export interface MeResponse {

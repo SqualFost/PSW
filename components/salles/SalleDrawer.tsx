@@ -1,6 +1,6 @@
 "use client";
 
-import { format, differenceInMinutes } from "date-fns";
+import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   Drawer,
@@ -18,22 +18,20 @@ import {
   CardHeader as EnteteCarteInfo,
   CardTitle as TitreCarteInfo,
 } from "@/components/ui/card";
-import { SallesDetailsDrawerProps } from "@/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { SallesDetailsDrawerProps } from "@/types";
+import { User, Clock } from "lucide-react";
 
 export function SallesDetailsDrawer({
   salleSelectionnee,
   dateSelectionnee,
   activite,
   onClose,
+  role,
 }: SallesDetailsDrawerProps) {
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, "HH:mm");
-  };
-
-  const calculateDuration = (debut: string, fin: string) => {
-    const minutes = differenceInMinutes(new Date(fin), new Date(debut));
-    return `${minutes} minutes`;
   };
 
   let statutDisplay;
@@ -44,10 +42,7 @@ export function SallesDetailsDrawer({
       const reservation = activite.reservations[0];
       statutDisplay = `Utilisée de ${formatTime(
         reservation.horairedebut
-      )} à ${formatTime(reservation.horairefin)} (${calculateDuration(
-        reservation.horairedebut,
-        reservation.horairefin
-      )})`;
+      )} à ${formatTime(reservation.horairefin)}`;
       coursDisplay = reservation.cours;
     } else if (activite.detail) {
       statutDisplay = activite.detail;
@@ -74,9 +69,12 @@ export function SallesDetailsDrawer({
                 </TitreCarteInfo>
               </EnteteCarteInfo>
               <ContenuCarteInfo>
-                <p className="text-lg font-semibold">{statutDisplay}</p>
+                <p className="text-lg font-semibold">
+                  {statutDisplay || "Disponible"}
+                </p>
               </ContenuCarteInfo>
             </CarteInfo>
+
             {/* Cours */}
             <CarteInfo>
               <EnteteCarteInfo className="pb-2">
@@ -88,45 +86,89 @@ export function SallesDetailsDrawer({
                 <p className="text-lg font-semibold">{coursDisplay}</p>
               </ContenuCarteInfo>
             </CarteInfo>
-            {/* Occupation */}
-            <CarteInfo>
+
+            {/* Futures réservations */}
+            <CarteInfo className="col-span-1 md:col-span-2">
               <EnteteCarteInfo className="pb-2">
-                <TitreCarteInfo className="text-sm font-medium">
-                  Occupation
+                <TitreCarteInfo className="text-sm font-medium flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Futures réservations
                 </TitreCarteInfo>
               </EnteteCarteInfo>
               <ContenuCarteInfo>
-                <p className="text-lg font-semibold">
-                  {(activite?.nombre_utilisateurs ?? 0) + " élève(s)"}
-                </p>
-              </ContenuCarteInfo>
-            </CarteInfo>
-            {/* Liste Élèves */}
-            <CarteInfo>
-              <EnteteCarteInfo className="pb-2">
-                <TitreCarteInfo className="text-sm font-medium">
-                  Liste Élèves
-                </TitreCarteInfo>
-              </EnteteCarteInfo>
-              <ContenuCarteInfo>
-                {activite?.utilisateurs_derniere_heure?.length ? (
-                  <details>
-                    <summary className="cursor-pointer text-blue-600 underline">
-                      Voir la liste
-                    </summary>
-                    <ul className="mt-2">
-                      {activite.utilisateurs_derniere_heure.map((u) => (
-                        <li key={u.id}>
-                          {u.prenom} {u.nom}
-                        </li>
+                {(activite?.reservations ?? []).length > 0 ? (
+                  <ScrollArea className="h-[120px] w-full pr-4">
+                    <div className="space-y-3">
+                      {activite?.reservations.map((reservation, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between border-b pb-2"
+                        >
+                          <div>
+                            <p className="font-medium">{reservation.cours}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {reservation.utilisateur.prenom}{" "}
+                              {reservation.utilisateur.nom}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">
+                              {formatTime(reservation.horairedebut)} -{" "}
+                              {formatTime(reservation.horairefin)}
+                            </p>
+                          </div>
+                        </div>
                       ))}
-                    </ul>
-                  </details>
+                    </div>
+                  </ScrollArea>
                 ) : (
-                  <p>Aucun élève</p>
+                  <p className="text-muted-foreground">
+                    Aucune réservation future
+                  </p>
                 )}
               </ContenuCarteInfo>
             </CarteInfo>
+
+            {/* Liste Élèves */}
+            {role !== "Eleve" ? (
+              <CarteInfo className="col-span-1 md:col-span-2">
+                <EnteteCarteInfo className="pb-2">
+                  <TitreCarteInfo className="text-sm font-medium flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Liste Élèves ({activite?.nombre_utilisateurs ?? 0})
+                  </TitreCarteInfo>
+                </EnteteCarteInfo>
+                <ContenuCarteInfo>
+                  {(activite?.utilisateurs_derniere_heure ?? []).length > 0 ? (
+                    <ScrollArea className="h-[120px] w-full pr-4">
+                      <div className="space-y-2">
+                        {activite?.utilisateurs_derniere_heure.map((u) => (
+                          <div
+                            key={u.id}
+                            className="flex items-center gap-2 border-b pb-2"
+                          >
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                              <User className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="font-medium">
+                                {u.prenom} {u.nom}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Aucun élève présent actuellement
+                    </p>
+                  )}
+                </ContenuCarteInfo>
+              </CarteInfo>
+            ) : (
+              ""
+            )}
           </div>
         </div>
         <DrawerFooter>

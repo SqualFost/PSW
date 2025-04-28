@@ -224,7 +224,15 @@ export default function VieScolairePage() {
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div className="space-y-1">
-                            <p className="font-medium">{absence.cours}</p>
+                            <div>
+                              {absence.motif == null ? (
+                                <p>{absence.cours} | Motif : Aucun motif</p>
+                              ) : (
+                                <p>
+                                  {absence.cours} | Motif : {absence.motif}
+                                </p>
+                              )}
+                            </div>
                             <p className="text-sm text-muted-foreground">
                               {formatDate(absence.horaire)}
                             </p>
@@ -270,7 +278,13 @@ export default function VieScolairePage() {
                         >
                           <div className="space-y-1">
                             <div>
-                              <p className="font-medium">{retard.cours}</p>
+                              {retard.motif == null ? (
+                                <p>{retard.cours} | Motif : Aucun motif</p>
+                              ) : (
+                                <p>
+                                  {retard.cours} | Motif : {retard.motif}
+                                </p>
+                              )}
                             </div>
                             <p className="text-sm text-muted-foreground">
                               {formatDate(retard.horaire)} | Durée :{" "}

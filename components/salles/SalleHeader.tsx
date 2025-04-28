@@ -1,9 +1,4 @@
 "use client";
-
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,9 +10,6 @@ import {
 import { SallesHeaderProps } from "@/types";
 
 export function SallesHeader({
-  dateSelectionnee,
-  onJourPrecedent,
-  onJourSuivant,
   termeRecherche,
   setTermeRecherche,
   filtreOccupation,
@@ -26,28 +18,6 @@ export function SallesHeader({
 }: SallesHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-      <div className="flex items-center gap-2">
-        <Button
-          aria-label="Jour précédent"
-          onClick={onJourPrecedent}
-          variant="outline"
-          size="icon"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <h2 className="text-xl font-bold">
-          {format(dateSelectionnee, "EEEE dd MMMM yyyy", { locale: fr })}
-        </h2>
-        <Button
-          aria-label="Jour suivant"
-          onClick={onJourSuivant}
-          variant="outline"
-          size="icon"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-
       <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
         <Input
           placeholder="Rechercher une salle..."
