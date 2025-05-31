@@ -39,15 +39,36 @@ export function SallesDetailsDrawer({
 
   if (activite) {
     if (activite.reservations?.length) {
-      const reservation = activite.reservations[0];
+      const now = new Date();
+      const reservationTriee = [...activite.reservations].sort(
+        (a, b) =>
+          new Date(a.horairedebut).getTime() -
+          new Date(b.horairedebut).getTime()
+      );
+
+      let reservationActuelle = reservationTriee[0];
+      for (let index = 0; index < reservationTriee.length; index++) {
+        if (new Date(reservationTriee[index].horairedebut) > now) {
+          reservationActuelle = reservationTriee[index];
+          break;
+        }
+      }
+
       statutDisplay = `Utilisée de ${formatTime(
-        reservation.horairedebut
-      )} à ${formatTime(reservation.horairefin)}`;
-      coursDisplay = reservation.cours;
+        reservationActuelle.horairedebut
+      )} à ${formatTime(reservationActuelle.horairefin)}`;
+      coursDisplay = reservationActuelle.cours;
     } else if (activite.detail) {
       statutDisplay = activite.detail;
     }
   }
+
+  const futureReservation = (activite?.reservations ?? [])
+    .filter((reservation) => new Date(reservation.horairedebut) > new Date())
+    .sort(
+      (a, b) =>
+        new Date(a.horairedebut).getTime() - new Date(b.horairedebut).getTime()
+    );
 
   return (
     <Drawer open={true} onOpenChange={(open) => !open && onClose()}>
@@ -96,10 +117,10 @@ export function SallesDetailsDrawer({
                 </TitreCarteInfo>
               </EnteteCarteInfo>
               <ContenuCarteInfo>
-                {(activite?.reservations ?? []).length > 0 ? (
+                {futureReservation.length > 0 ? (
                   <ScrollArea className="h-[120px] w-full pr-4">
                     <div className="space-y-3">
-                      {activite?.reservations.map((reservation, index) => (
+                      {futureReservation.map((reservation, index) => (
                         <div
                           key={index}
                           className="flex justify-between border-b pb-2"
@@ -118,9 +139,13 @@ export function SallesDetailsDrawer({
                             </p>
                             <p>
                               {" "}
-                              {format(dateSelectionnee, "dd MMMM yyyy", {
-                                locale: fr,
-                              })}
+                              {format(
+                                reservation.horairedebut,
+                                "dd MMMM yyyy",
+                                {
+                                  locale: fr,
+                                }
+                              )}
                             </p>
                           </div>
                         </div>
