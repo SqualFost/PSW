@@ -116,6 +116,12 @@ export function SallesDetailsDrawer({
                               {formatTime(reservation.horairedebut)} -{" "}
                               {formatTime(reservation.horairefin)}
                             </p>
+                            <p>
+                              {" "}
+                              {format(dateSelectionnee, "dd MMMM yyyy", {
+                                locale: fr,
+                              })}
+                            </p>
                           </div>
                         </div>
                       ))}
